@@ -2,7 +2,7 @@ import java.io.Serializable;
 import java.util.*;
 
 public class CustomTree extends AbstractList<String> implements Cloneable, Serializable {
-    private static com.javarush.task.task20.task2028.CustomTree.Entry<String> root;
+    private static Entry<String> root;
     private static int countEntry;
 
     private void countEntryIncrement() {
@@ -26,11 +26,11 @@ public class CustomTree extends AbstractList<String> implements Cloneable, Seria
         countEntryIncrement();
 
         if (root == null) {
-            root = new com.javarush.task.task20.task2028.CustomTree.Entry<>(element, index);
+            root = new Entry<>(element, index);
             return;
         }
 
-        addEntry(new com.javarush.task.task20.task2028.CustomTree.Entry<>(element, index));
+        addEntry(new Entry<>(element, index));
     }
 
     /**
@@ -38,8 +38,8 @@ public class CustomTree extends AbstractList<String> implements Cloneable, Seria
      * Добавляет его в поле parent для newEntry.
      * Назначает ссылку на newEntry родителю в поле левого или правого потомка.
      */
-    public void addEntry(com.javarush.task.task20.task2028.CustomTree.Entry<String> newEntry) {
-        com.javarush.task.task20.task2028.CustomTree.Entry<String> parent = root.searchSuitableParent(newEntry.getIndex());
+    public void addEntry(Entry<String> newEntry) {
+        Entry<String> parent = root.searchSuitableParent(newEntry.getIndex());
         newEntry.setParent(parent);
         if (newEntry.getIndex() < parent.getIndex()) {
             parent.setLeftChild(newEntry);
@@ -69,7 +69,7 @@ public class CustomTree extends AbstractList<String> implements Cloneable, Seria
      * */
     @Override
     public String remove(int index) {
-        com.javarush.task.task20.task2028.CustomTree.Entry<String> entryForDelete = root.findEntry(index);
+        Entry<String> entryForDelete = root.findEntry(index);
         countEntryDecrement();
 
         if (entryForDelete.getIndex() == root.getIndex()) {
@@ -82,11 +82,11 @@ public class CustomTree extends AbstractList<String> implements Cloneable, Seria
     }
 
     /**
-     * Затирет ссылку на объект entryForDelete для его родителя.
+     * Затирает ссылку на объект entryForDelete для его родителя.
      * Если у entryForDelete присутствовали потомки, отправляет их на добавление.
      * */
-    private void removeVertex(com.javarush.task.task20.task2028.CustomTree.Entry<String> entryForDelete) {
-        com.javarush.task.task20.task2028.CustomTree.Entry<String> parent = entryForDelete.getParent();
+    private void removeVertex(Entry<String> entryForDelete) {
+        Entry<String> parent = entryForDelete.getParent();
 
         if (entryForDelete.getIndex() < parent.getIndex()) {
             parent.setLeftChild(null);
@@ -107,7 +107,7 @@ public class CustomTree extends AbstractList<String> implements Cloneable, Seria
      * Если был только один потомок, то он становится новым корнем.
      * Если потомков не было корень == null.
      * */
-    private void removeRoot(com.javarush.task.task20.task2028.CustomTree.Entry<String> entryForDelete) {
+    private void removeRoot(Entry<String> entryForDelete) {
         if (!root.availableToAddLeftChildren() && !root.availableToAddRightChildren()) {
             root = entryForDelete.getLeftChild();
             addEntry(entryForDelete.getRightChild());
@@ -150,9 +150,9 @@ public class CustomTree extends AbstractList<String> implements Cloneable, Seria
     private class Entry<T> implements Serializable {
         private String elementName;
         private final int index;
-        private com.javarush.task.task20.task2028.CustomTree.Entry<T> parent, leftChild, rightChild;
+        private Entry<T> parent, leftChild, rightChild;
 
-        public Entry(String elementName, int index, com.javarush.task.task20.task2028.CustomTree.Entry<T> parent) {
+        public Entry(String elementName, int index, Entry<T> parent) {
             this.elementName = elementName;
             this.index = index;
             this.parent = parent;
@@ -176,7 +176,7 @@ public class CustomTree extends AbstractList<String> implements Cloneable, Seria
         /**
          * Рукурсивный поиск родителя, подходящего для добавления потомка.
          * */
-        public com.javarush.task.task20.task2028.CustomTree.Entry<T> searchSuitableParent(int index) {
+        public Entry<T> searchSuitableParent(int index) {
             if (index < this.index) {
                 if (this.availableToAddLeftChildren()) {
                     return this;
@@ -192,7 +192,7 @@ public class CustomTree extends AbstractList<String> implements Cloneable, Seria
         /**
          * Рекурсивный поиск подходящего по индексу Entry.
          * */
-        public com.javarush.task.task20.task2028.CustomTree.Entry<T> findEntry(int index) {
+        public Entry<T> findEntry(int index) {
             if (index == this.index) {
                 return this;
             }
@@ -212,11 +212,11 @@ public class CustomTree extends AbstractList<String> implements Cloneable, Seria
                     '}';
         }
 
-        public void setLeftChild(com.javarush.task.task20.task2028.CustomTree.Entry<T> leftChild) {
+        public void setLeftChild(Entry<T> leftChild) {
             this.leftChild = leftChild;
         }
 
-        public void setRightChild(com.javarush.task.task20.task2028.CustomTree.Entry<T> rightChild) {
+        public void setRightChild(Entry<T> rightChild) {
             this.rightChild = rightChild;
         }
 
@@ -224,7 +224,7 @@ public class CustomTree extends AbstractList<String> implements Cloneable, Seria
             this.elementName = elementName;
         }
 
-        public void setParent(com.javarush.task.task20.task2028.CustomTree.Entry<T> parent) {
+        public void setParent(Entry<T> parent) {
             this.parent = parent;
         }
 
@@ -236,15 +236,15 @@ public class CustomTree extends AbstractList<String> implements Cloneable, Seria
             return index;
         }
 
-        public com.javarush.task.task20.task2028.CustomTree.Entry<T> getParent() {
+        public Entry<T> getParent() {
             return parent;
         }
 
-        public com.javarush.task.task20.task2028.CustomTree.Entry<T> getLeftChild() {
+        public Entry<T> getLeftChild() {
             return leftChild;
         }
 
-        public com.javarush.task.task20.task2028.CustomTree.Entry<T> getRightChild() {
+        public Entry<T> getRightChild() {
             return rightChild;
         }
     }

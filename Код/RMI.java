@@ -24,6 +24,8 @@ public class MainClass {
         registry.bind(UNIC_BINDING_NAME, remote); // Регистрация на основе имени и заглушки
 
         Thread.sleep(Integer.MAX_VALUE); // Перевод в состояние сна, чтобы программа не завершилась
+
+        UnicastRemoteObject.unexportObject(classForRemote, false); // Удаляет объект из среды выполнения RMI (иначе программа будет висеть)
     }
 }
 
@@ -36,4 +38,20 @@ public class Client {
 
         System.out.println(ourInterface.doIt("Это строка вывелась из doIt"));
     }
+}
+
+/**
+ * Добавление некольких объектов в реестр
+*/        
+registry = LocateRegistry.createRegistry(2099);
+
+stub = UnicastRemoteObject.exportObject(dog, 0);
+registry.bind(UNIC_NAME_DOG, stub);
+
+stub = UnicastRemoteObject.exportObject(cat, 0);
+registry.bind(UNIC_NAME_CAT, stub);
+
+for (String bindingName : registry.list()) {
+    Animal service = (Animal) registry.lookup(bindingName);
+    service.printName();
 }
